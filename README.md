@@ -2,6 +2,25 @@
 
 O objetivo deste projeto é facilitar o cadastro de dispositivos no servidor DHCP para os usuários do IFF campus Centro.
 
+## Problemas atuais
+
+Problemas:
+
+ - Cadastro duplo
+ - Dificuldade de cadastro
+ 	- Dificil achar IP
+ 	- Falta de padronização no nome do host
+ - Cadastro na faixa de IP errado
+ 	
+Padronização de nomes do DHCP: 10.12.10.9-1225467839
+
+Grupos de usuários:
+ - servidor
+ - terceirizado
+ - bolsistas
+ - estagiário
+ - temporário
+
 ## Arquitetura
 
 A arquitetura utilizada será a de microsserviços e será descrita minuciosamente nos próximos commits.
