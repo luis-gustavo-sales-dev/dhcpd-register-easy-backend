@@ -28,6 +28,8 @@ public class DeviceRegisterService {
 						" e mac " + mac + " já existe!");
 			});
 		
+		// Precisa verificar se o grupo é válido antes de criar
+		
 		return this.deviceRegisterRepository.save(deviceRegister);
 	}
 
@@ -55,5 +57,15 @@ public class DeviceRegisterService {
 			return null;
 		}
 		return dr.get();
+	}
+	
+	public void deleteDeviceRegisterByCpfAndMac(String cpf, String mac) {
+		var deviceRegister = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac)
+				.orElseThrow( 
+						() -> new CpfAndMacNotFoundException(
+								"Cpf " + cpf + " e mac " + mac + " não foram encontrados."));
+		this.deviceRegisterRepository.delete(deviceRegister);
+		
+		
 	}
 }
