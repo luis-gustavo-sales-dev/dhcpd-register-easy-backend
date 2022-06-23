@@ -1,5 +1,7 @@
 package br.dev.luisgustavosales.dhcpregister.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,16 @@ public class DeviceRegisterService {
 	public DeviceRegister findByCpfAndMac(String cpf, String mac) {
 		
 		var deviceRegister = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac);
+		
+		if (deviceRegister.isEmpty()) {
+			return null;
+		}
+		return deviceRegister.get();
+	}
+	
+	public List<DeviceRegister> findByCpf(String cpf) {
+		
+		var deviceRegister = deviceRegisterRepository.findByIdsCpfContaining(cpf);
 		
 		if (deviceRegister.isEmpty()) {
 			return null;

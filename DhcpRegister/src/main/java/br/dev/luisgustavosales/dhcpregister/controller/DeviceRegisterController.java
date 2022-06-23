@@ -1,5 +1,7 @@
 package br.dev.luisgustavosales.dhcpregister.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
@@ -29,6 +32,22 @@ public class DeviceRegisterController {
 		System.out.println("mac: " + mac);
 		
 		var deviceRegister = this.deviceRegisterService.findByCpfAndMac(cpf, mac);
+		
+		if (deviceRegister == null) {
+			// Retorne uma exceção
+			return ResponseEntity.notFound().build();
+		}
+		
+		return ResponseEntity.ok(deviceRegister);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<DeviceRegister>> findByCpf(
+			@RequestParam String cpf) {
+		
+		System.out.println("cpf: " + cpf);
+		
+		var deviceRegister = this.deviceRegisterService.findByCpf(cpf);
 		
 		if (deviceRegister == null) {
 			// Retorne uma exceção
