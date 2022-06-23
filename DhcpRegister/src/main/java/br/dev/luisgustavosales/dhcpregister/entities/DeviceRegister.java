@@ -4,17 +4,18 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
+@Table(name = "tb_device_registers")
 public class DeviceRegister {
 	
 	@Id
@@ -29,10 +30,6 @@ public class DeviceRegister {
 	public String mac;
 	
 	@ManyToOne
-	@JoinTable( name = "tb_device_group",
-			joinColumns = @JoinColumn(name = "device_id"),
-			inverseJoinColumns = @JoinColumn(name = "group_id"))
-	@Column(nullable = false)
 	public DeviceUserGroup group;
 
 	public Long getId() {
