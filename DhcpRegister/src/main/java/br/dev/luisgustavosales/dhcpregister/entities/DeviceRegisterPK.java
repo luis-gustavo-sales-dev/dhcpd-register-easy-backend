@@ -12,10 +12,10 @@ public class DeviceRegisterPK implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Size( min = 11, max = 11, message = "O campo CPF deve ter 11 caracteres.")
-	public String cpf;
+	private String cpf;
 	
 	@Size( min = 17, max = 17, message = "O campo MAC deve ter 17 caracteres (contando com os dois pontos)")
-	public String mac;
+	private String mac;
 
 	public String getCpf() {
 		return cpf;

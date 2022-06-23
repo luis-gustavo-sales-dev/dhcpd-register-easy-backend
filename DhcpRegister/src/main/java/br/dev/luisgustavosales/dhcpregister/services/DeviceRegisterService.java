@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
 
 @Service
@@ -15,6 +17,16 @@ public class DeviceRegisterService {
 	private DeviceRegisterRepository deviceRegisterRepository;
 	
 	public DeviceRegister create(DeviceRegister deviceRegister) {
+		var cpf = deviceRegister.getIds().getCpf();
+		var mac = deviceRegister.getIds().getMac();
+		
+		var deviceRegisterAlreadyExists = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac);
+		
+		deviceRegisterAlreadyExists.ifPresent( s -> { 
+				throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + cpf +
+						" e mac " + mac + " já existe!");
+			});
+		
 		return this.deviceRegisterRepository.save(deviceRegister);
 	}
 
@@ -22,10 +34,8 @@ public class DeviceRegisterService {
 		
 		var deviceRegister = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac);
 		
-		if (deviceRegister.isEmpty()) {
-			return null;
-		}
-		return deviceRegister.get();
+		return deviceRegister.orElseThrow( 
+				() -> new CpfAndMacNotFoundException("Cpf " + cpf + " e mac " + mac + " não foram encontrados."));
 	}
 	
 	public List<DeviceRegister> findByCpf(String cpf) {
