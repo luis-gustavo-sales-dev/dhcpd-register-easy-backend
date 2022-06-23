@@ -12,15 +12,17 @@ public class DeviceRegisterService {
 	@Autowired
 	private DeviceRegisterRepository deviceRegisterRepository;
 	
-	public DeviceRegister findById(Long id) {
-		var deviceRegister = deviceRegisterRepository.findById(id);
+	public DeviceRegister create(DeviceRegister deviceRegister) {
+		return this.deviceRegisterRepository.save(deviceRegister);
+	}
+
+	public DeviceRegister findByCpfAndMac(String cpf, String mac) {
+		
+		var deviceRegister = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac);
+		
 		if (deviceRegister.isEmpty()) {
 			return null;
 		}
 		return deviceRegister.get();
-	}
-	
-	public DeviceRegister create(DeviceRegister deviceRegister) {
-		return this.deviceRegisterRepository.save(deviceRegister);
 	}
 }

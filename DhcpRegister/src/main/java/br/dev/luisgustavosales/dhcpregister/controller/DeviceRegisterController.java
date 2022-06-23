@@ -20,11 +20,15 @@ public class DeviceRegisterController {
 	@Autowired
 	private DeviceRegisterService deviceRegisterService;
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<DeviceRegister> findById(
-			@PathVariable Long id) {
+	@GetMapping("/{cpf}/{mac}")
+	public ResponseEntity<DeviceRegister> findByCpfAndMac(
+			@PathVariable String cpf,
+			@PathVariable String mac) {
 		
-		var deviceRegister = this.deviceRegisterService.findById(id);
+		System.out.println("cpf: " + cpf);
+		System.out.println("mac: " + mac);
+		
+		var deviceRegister = this.deviceRegisterService.findByCpfAndMac(cpf, mac);
 		
 		if (deviceRegister == null) {
 			// Retorne uma exceção
