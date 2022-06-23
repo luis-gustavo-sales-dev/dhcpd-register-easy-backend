@@ -1,8 +1,10 @@
 package br.dev.luisgustavosales.dhcpregister.entities;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,14 +21,17 @@ public class DeviceUserGroup {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Long id;
+	private Long id;
 	
 	@NotBlank
 	@Column( unique = true )
-	public String name;
+	private String name;
 	
-	@OneToMany(mappedBy = "deviceUserGroup",fetch = FetchType.EAGER)
-	public Set<IpRangeGroup> iprangegroup;
+	@OneToMany(
+			mappedBy = "deviceUserGroup",
+			fetch = FetchType.EAGER, 
+			cascade = CascadeType.PERSIST)
+	private Set<IpRangeGroup> iprangegroup = new HashSet<>();
 	
 	public Long getId() {
 		return id;
@@ -63,9 +68,10 @@ public class DeviceUserGroup {
 		DeviceUserGroup other = (DeviceUserGroup) obj;
 		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
+	
 	@Override
 	public String toString() {
-		return "DeviceUserGroup [id=" + id + ", name=" + name + ", iprange=" + iprangegroup + "]";
+		return "DeviceUserGroup [id=" + id + ", name=" + name + ", iprangegroup=" + iprangegroup + "]";
 	}
 	
 	

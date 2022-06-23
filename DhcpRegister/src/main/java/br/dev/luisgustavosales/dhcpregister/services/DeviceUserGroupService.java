@@ -7,14 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
+import br.dev.luisgustavosales.dhcpregister.entities.IpRangeGroup;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupAlreadyExistsException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.IpRangeAlreadyExistsInOtherDeviceUserGroupException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
+import br.dev.luisgustavosales.dhcpregister.repositories.IpRangeGroupRepository;
 
 @Service
 public class DeviceUserGroupService {
 	
 	@Autowired
 	private DeviceUserGroupRepository deviceUserGroupRepository;
+	
+	@Autowired
+	private IpRangeGroupRepository ipRangeGroupRepository;
 	
 	public DeviceUserGroup findById(Long id) {
 		return deviceUserGroupRepository.findById(id)
@@ -32,5 +39,27 @@ public class DeviceUserGroupService {
 	public DeviceUserGroup findByIprangegroupRange(String range) {
 		return deviceUserGroupRepository.findByIprangegroupRange(range)
 				.orElse(null);
+	}
+	
+	public DeviceUserGroup create(DeviceUserGroup deviceUserGroup) {
+		// Verifique se já existe um DeviceUserGroup com o mesmo nome
+		var deviceUserGroupExists = deviceUserGroupRepository.findByNameIgnoreCase(deviceUserGroup.getName());
+		deviceUserGroupExists.ifPresent( (s) -> {
+			throw new DeviceUserGroupAlreadyExistsException("Já existe um grupo com o nome de " + deviceUserGroup.getName());
+		});
+		// Verifique se não existe um iprange já cadastrado
+		// Não pode existir o mesmo range para dois grupos diferentes
+		for (IpRangeGroup range: deviceUserGroup.getIprangegroup()) {
+			System.out.println("range: " + range);
+			var deviceUserGroupWithIPRange = ipRangeGroupRepository.findByRange(range.getRange());
+			deviceUserGroupWithIPRange.ifPresent(
+					s -> { 
+							throw new IpRangeAlreadyExistsInOtherDeviceUserGroupException("Esse range já está cadastrado: " + range); 
+						}
+					);
+			System.out.println("isPresent: " + deviceUserGroupWithIPRange.isPresent());
+		}
+		
+		return deviceUserGroupRepository.save(deviceUserGroup);
 	}
 }

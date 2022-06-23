@@ -11,6 +11,9 @@ public interface DeviceUserGroupRepository extends JpaRepository<DeviceUserGroup
 	
 	Optional<DeviceUserGroup> findById(Long id);
 	Optional<DeviceUserGroup> findByIprangegroupRange(String range);
+	Optional<DeviceUserGroup> findByNameIgnoreCase(String name);
 	Optional<List<DeviceUserGroup>> findByNameIgnoreCaseContaining(String name);
+	
+	
 	
 }
