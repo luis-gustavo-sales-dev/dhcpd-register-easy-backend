@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
+import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
@@ -46,5 +47,13 @@ public class DeviceRegisterService {
 			return null;
 		}
 		return deviceRegister.get();
+	}
+	
+	public DeviceRegister findByDeviceUserGroup(DeviceUserGroup deviceUserGroup) {
+		var dr = deviceRegisterRepository.findByGroup(deviceUserGroup);
+		if (dr.isEmpty()) {
+			return null;
+		}
+		return dr.get();
 	}
 }
