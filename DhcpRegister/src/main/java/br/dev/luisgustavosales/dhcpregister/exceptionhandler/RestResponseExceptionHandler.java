@@ -16,12 +16,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 
 @ControllerAdvice
 public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler(CpfAndMacNotFoundException.class)
-	public ResponseEntity<Object> handleUserNotFoundException(
+	public ResponseEntity<Object> handleCpfAndMacNotFoundException(
 			CpfAndMacNotFoundException ex,
 			WebRequest request) {
 		
@@ -36,11 +37,28 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
 	}
 	
 	@ExceptionHandler(CpfAndMacAlreadyExistsException.class)
-	public ResponseEntity<Object> handleUserNotFoundException(
+	public ResponseEntity<Object> handleCpfAndMacAlreadyExistsException(
 			CpfAndMacAlreadyExistsException ex,
 			WebRequest request) {
 		
-		var status = HttpStatus.BAD_REQUEST;
+		var status = HttpStatus.NOT_FOUND;
+		
+		var defaultException = new DefaultException();
+		defaultException.setStatus(status.value());
+		defaultException.setTitle(ex.getMessage());
+		defaultException.setDateTime(LocalDateTime.now());
+		
+		return handleExceptionInternal(ex, defaultException, new HttpHeaders(), status, request);
+	}
+	
+	// DeviceUserGroup Exceptions
+	
+	@ExceptionHandler(DeviceUserGroupNotFoundException.class)
+	public ResponseEntity<Object> handleDeviceUserGroupNotFoundException(
+			DeviceUserGroupNotFoundException ex,
+			WebRequest request) {
+		
+		var status = HttpStatus.NOT_FOUND;
 		
 		var defaultException = new DefaultException();
 		defaultException.setStatus(status.value());
