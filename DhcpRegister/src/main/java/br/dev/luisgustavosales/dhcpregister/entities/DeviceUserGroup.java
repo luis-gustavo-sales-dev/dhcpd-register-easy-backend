@@ -28,9 +28,8 @@ public class DeviceUserGroup {
 	private String name;
 	
 	@OneToMany(
-			mappedBy = "deviceUserGroup",
-			fetch = FetchType.EAGER, 
-			cascade = CascadeType.PERSIST)
+			fetch = FetchType.EAGER,
+			cascade={CascadeType.PERSIST})
 	private Set<IpRangeGroup> iprangegroup = new HashSet<>();
 	
 	public Long getId() {

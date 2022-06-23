@@ -2,6 +2,7 @@ package br.dev.luisgustavosales.dhcpregister.entities;
 
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,7 +24,6 @@ public class IpRangeGroup {
 	private String range;
 	
 	@ManyToOne
-	@JoinColumn(name = "device_user_group_id")
 	private DeviceUserGroup deviceUserGroup;
 
 	public Long getId() {
