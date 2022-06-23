@@ -9,13 +9,18 @@ import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
+import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
 
 @Service
 public class DeviceRegisterService {
 
 	@Autowired
 	private DeviceRegisterRepository deviceRegisterRepository;
+	
+	@Autowired
+	private DeviceUserGroupRepository deviceUserGroupRepository;
 	
 	public DeviceRegister create(DeviceRegister deviceRegister) {
 		var cpf = deviceRegister.getIds().getCpf();
@@ -29,6 +34,11 @@ public class DeviceRegisterService {
 			});
 		
 		// Precisa verificar se o grupo é válido antes de criar
+		
+		deviceUserGroupRepository.findById(deviceRegister.getGroup().getId())
+			.orElseThrow( 
+					() -> new DeviceUserGroupNotFoundException("Não há nenhum " +
+							"grupo associado a esse id: " + deviceRegister.getGroup().getId()));
 		
 		return this.deviceRegisterRepository.save(deviceRegister);
 	}

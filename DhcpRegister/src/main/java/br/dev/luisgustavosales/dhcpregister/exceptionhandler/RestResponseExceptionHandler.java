@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupAlreadyExistsException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupAreUsedByDeviceRegiterException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.IpRangeAlreadyExistsInOtherDeviceUserGroupException;
 
@@ -41,6 +42,21 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
 	@ExceptionHandler(CpfAndMacAlreadyExistsException.class)
 	public ResponseEntity<Object> handleCpfAndMacAlreadyExistsException(
 			CpfAndMacAlreadyExistsException ex,
+			WebRequest request) {
+		
+		var status = HttpStatus.NOT_FOUND;
+		
+		var defaultException = new DefaultException();
+		defaultException.setStatus(status.value());
+		defaultException.setTitle(ex.getMessage());
+		defaultException.setDateTime(LocalDateTime.now());
+		
+		return handleExceptionInternal(ex, defaultException, new HttpHeaders(), status, request);
+	}
+	
+	@ExceptionHandler(DeviceUserGroupAreUsedByDeviceRegiterException.class)
+	public ResponseEntity<Object> handleDeviceUserGroupAreUsedByDeviceRegiterException(
+			DeviceUserGroupAreUsedByDeviceRegiterException ex,
 			WebRequest request) {
 		
 		var status = HttpStatus.NOT_FOUND;
