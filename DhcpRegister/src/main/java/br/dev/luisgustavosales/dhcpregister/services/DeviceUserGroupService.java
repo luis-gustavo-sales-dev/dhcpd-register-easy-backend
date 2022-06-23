@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.entities.IpRangeGroup;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupAlreadyExistsException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupAreUsedByDeviceRegiterException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.IpRangeAlreadyExistsInOtherDeviceUserGroupException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
@@ -22,6 +23,9 @@ public class DeviceUserGroupService {
 	
 	@Autowired
 	private IpRangeGroupRepository ipRangeGroupRepository;
+	
+	@Autowired
+	private DeviceRegisterService deviceRegisterService;
 	
 	public DeviceUserGroup findById(Long id) {
 		return deviceUserGroupRepository.findById(id)
@@ -61,5 +65,25 @@ public class DeviceUserGroupService {
 		}
 		
 		return deviceUserGroupRepository.save(deviceUserGroup);
+	}
+	
+	public void delete(Long id) {
+		// Verificar se existe um grupo com esse id
+		var du = deviceUserGroupRepository.findById(id)
+					.orElseThrow( 
+						() -> new DeviceUserGroupNotFoundException("Não há nenhum " +
+								"grupo associado a esse id: " + id));
+		
+		// Verificar se o grupo está associado a um DeviceRegister
+		var dr = deviceRegisterService.findByDeviceUserGroup(du);
+		if (dr != null) {
+			throw new DeviceUserGroupAreUsedByDeviceRegiterException(
+					"Este grupo está em uso pelo cadastro portador do CPF " + 
+					dr.getIds().getCpf() + "e não pode ser apagado: " + id);
+		}
+		
+		this.deviceUserGroupRepository.deleteById(id);
+		
+		
 	}
 }

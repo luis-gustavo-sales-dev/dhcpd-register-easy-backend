@@ -29,7 +29,7 @@ public class DeviceUserGroup {
 	
 	@OneToMany(
 			fetch = FetchType.EAGER,
-			cascade={CascadeType.PERSIST})
+			cascade={CascadeType.PERSIST, CascadeType.REMOVE})
 	private Set<IpRangeGroup> iprangegroup = new HashSet<>();
 	
 	public Long getId() {
