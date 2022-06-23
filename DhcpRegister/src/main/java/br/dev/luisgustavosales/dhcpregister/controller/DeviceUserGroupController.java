@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
+import br.dev.luisgustavosales.dhcpregister.entities.IpRangeGroup;
 import br.dev.luisgustavosales.dhcpregister.services.DeviceUserGroupService;
 
 @RestController
@@ -47,6 +49,20 @@ public class DeviceUserGroupController {
 		var deviceUserGroupCreated = this.deviceUserGroupService.create(deviceUserGroup);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(deviceUserGroupCreated);
+		
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<DeviceUserGroup> update(
+			@PathVariable Long id,
+			@RequestBody DeviceUserGroup deviceUserGroupToUpdate){
+		
+		var dg = this.deviceUserGroupService.findById(id);
+
+		var dgu = this.deviceUserGroupService.update(deviceUserGroupToUpdate, dg);
+		
+		return ResponseEntity.ok(dgu);
+
 		
 	}
 	

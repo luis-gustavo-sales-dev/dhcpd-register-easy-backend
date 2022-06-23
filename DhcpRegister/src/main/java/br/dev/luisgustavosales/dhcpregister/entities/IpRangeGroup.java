@@ -43,7 +43,7 @@ public class IpRangeGroup {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, range);
+		return Objects.hash(range);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class IpRangeGroup {
 		if (getClass() != obj.getClass())
 			return false;
 		IpRangeGroup other = (IpRangeGroup) obj;
-		return Objects.equals(id, other.id) && Objects.equals(range, other.range);
+		return Objects.equals(range, other.range);
 	}
 
 	@Override
