@@ -25,7 +25,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Autowired
 	private JwtTokenStore tokenStore;
 	
-	private static final String[] PUBLIC = { "/micro-oauth/oauth/token" };
+	private static final String[] PUBLIC = { "/micro-oauth/oauth/token", "/dhcpregister/**" };
 	
 	private static final String[] OPERATOR = { "/micro-users/**" };
 	
