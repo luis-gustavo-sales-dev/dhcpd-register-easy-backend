@@ -19,6 +19,9 @@ public class DeviceRegister implements Serializable{
 	
 	@ManyToOne
 	private DeviceUserGroup group;
+	
+	@ManyToOne
+	private DeviceType deviceType;
 
 	public DeviceRegisterPK getIds() {
 		return ids;
