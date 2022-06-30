@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -19,6 +20,9 @@ public class DeviceRegister implements Serializable{
 	
 	@ManyToOne
 	private DeviceUserGroup group;
+	
+	@ManyToOne
+	private DeviceType deviceType;
 
 	public DeviceRegisterPK getIds() {
 		return ids;
@@ -34,6 +38,14 @@ public class DeviceRegister implements Serializable{
 
 	public void setGroup(DeviceUserGroup group) {
 		this.group = group;
+	}
+
+	public DeviceType getDeviceType() {
+		return deviceType;
+	}
+
+	public void setDeviceType(DeviceType deviceType) {
+		this.deviceType = deviceType;
 	}
 
 	@Override
@@ -55,8 +67,9 @@ public class DeviceRegister implements Serializable{
 
 	@Override
 	public String toString() {
-		return "DeviceRegister [ids=" + ids + ", group=" + group + "]";
+		return "DeviceRegister [ids=" + ids + ", group=" + group + ", deviceType=" + deviceType + "]";
 	}
+
 
 	
 
