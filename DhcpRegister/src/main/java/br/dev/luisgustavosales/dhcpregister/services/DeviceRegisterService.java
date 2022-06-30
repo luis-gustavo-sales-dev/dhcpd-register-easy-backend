@@ -9,8 +9,10 @@ import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceTypeNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
+import br.dev.luisgustavosales.dhcpregister.repositories.DeviceTypeRepository;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class DeviceRegisterService {
 	
 	@Autowired
 	private DeviceUserGroupRepository deviceUserGroupRepository;
+	
+	@Autowired
+	private DeviceTypeRepository deviceTypeRepository;
 
 	public DeviceRegister findByCpfAndMac(String cpf, String mac) {
 		
@@ -64,8 +69,15 @@ public class DeviceRegisterService {
 		deviceUserGroupRepository.findById(deviceRegister.getGroup().getId())
 			.orElseThrow( 
 					() -> new DeviceUserGroupNotFoundException("Não há nenhum " +
-							"grupo associado a esse id: " + deviceRegister.getGroup().getId()));
+							"grupo associado a esse id: " + 
+							deviceRegister.getGroup().getId()));
 		
+		deviceTypeRepository.findById(deviceRegister.getDeviceType().getId())
+			.orElseThrow(
+					() -> new DeviceTypeNotFoundException("Não há nenhum " +
+							"tipo de dispositivo associado a esse id: " + 
+							deviceRegister.getDeviceType().getId()));
+			
 		return this.deviceRegisterRepository.save(deviceRegister);
 	}
 	
