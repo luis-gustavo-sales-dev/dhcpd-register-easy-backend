@@ -27,5 +27,7 @@ INSERT INTO tb_device_type (id, name) values (1, 'Celular'),(2, 'Notebook'),(3, 
 
 INSERT INTO tb_device_registers (cpf, mac, group_id, device_type_id) VALUES ('12244264793', '01:42:23:6f:a7:36', 1, 1);
 INSERT INTO tb_device_registers (cpf, mac, group_id, device_type_id) VALUES ('12244264793', '02:42:23:6f:a7:37', 1, 1);
-INSERT INTO tb_device_registers (cpf, mac, group_id, device_type_id) VALUES ('12345678900', '03:42:23:6f:a7:38', 2, 2);
+INSERT INTO tb_device_registers (cpf, mac, group_id, device_type_id) VALUES ('12244264793', '01:42:23:6f:a7:38', 1, 1);
+INSERT INTO tb_device_registers (cpf, mac, group_id, device_type_id) VALUES ('12244264793', '02:42:23:6f:a7:39', 1, 1);
+INSERT INTO tb_device_registers (cpf, mac, group_id, device_type_id) VALUES ('12345678900', '03:42:23:6f:a7:40', 2, 2);
 
