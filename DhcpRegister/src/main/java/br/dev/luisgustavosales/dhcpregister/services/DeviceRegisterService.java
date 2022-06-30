@@ -32,7 +32,8 @@ public class DeviceRegisterService {
 		var deviceRegister = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac);
 		
 		return deviceRegister.orElseThrow( 
-				() -> new CpfAndMacNotFoundException("Cpf " + cpf + " e mac " + mac + " não foram encontrados."));
+				() -> new CpfAndMacNotFoundException("Cpf " + cpf + 
+						" e mac " + mac + " não foram encontrados."));
 	}
 	
 	public List<DeviceRegister> findByCpf(String cpf) {
@@ -57,7 +58,8 @@ public class DeviceRegisterService {
 		var cpf = deviceRegister.getIds().getCpf();
 		var mac = deviceRegister.getIds().getMac();
 		
-		var deviceRegisterAlreadyExists = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac);
+		var deviceRegisterAlreadyExists = deviceRegisterRepository
+				.findByIdsCpfAndIdsMac(cpf, mac);
 		
 		deviceRegisterAlreadyExists.ifPresent( s -> { 
 				throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + cpf +
@@ -81,7 +83,10 @@ public class DeviceRegisterService {
 		return this.deviceRegisterRepository.save(deviceRegister);
 	}
 	
-	public DeviceRegister update(String cpf, String mac, DeviceRegister deviceRegisterToUpdate) {
+	public DeviceRegister update(
+			String cpf, 
+			String mac, 
+			DeviceRegister deviceRegisterToUpdate) {
 		
 		// Existe um registro com o mac e cpf informados?
 		var dr = deviceRegisterRepository.findByIdsCpfAndIdsMac(cpf, mac)
@@ -94,7 +99,8 @@ public class DeviceRegisterService {
 		deviceUserGroupRepository.findById(deviceRegisterToUpdate.getGroup().getId())
 			.orElseThrow( 
 					() -> new DeviceUserGroupNotFoundException("Não há nenhum " +
-							"grupo associado a esse id: " + deviceRegisterToUpdate.getGroup().getId()));
+							"grupo associado a esse id: " + 
+							deviceRegisterToUpdate.getGroup().getId()));
 		
 		// Existe outro registro com o CPF e MAC informados para atualização
 		deviceRegisterRepository.findByIdsCpfAndIdsMac(
@@ -104,10 +110,17 @@ public class DeviceRegisterService {
 							(d) ->  {
 									throw new CpfAndMacAlreadyExistsException(
 										"Já existe um registro com o Cpf " + 
-												deviceRegisterToUpdate.getIds().getCpf() + " e Mac " + 
+												deviceRegisterToUpdate.getIds().getCpf() + 
+												" e Mac " + 
 												deviceRegisterToUpdate.getIds().getMac() + 
 												" informados para atualização.");
 								});
+		
+		deviceTypeRepository.findById(deviceRegisterToUpdate.getDeviceType().getId())
+		.orElseThrow(
+				() -> new DeviceTypeNotFoundException("Não há nenhum " +
+						"tipo de dispositivo associado a esse id: " + 
+						deviceRegisterToUpdate.getDeviceType().getId()));
 		
 		// Apague o registro anterior e crie um novo
 		this.deviceRegisterRepository.delete(dr);
