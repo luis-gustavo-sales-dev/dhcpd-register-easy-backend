@@ -1,10 +1,13 @@
 package br.dev.luisgustavosales.dhcpregister.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.dev.luisgustavosales.dhcpregister.dtos.BulkCreateDeviceRegisterDTO;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacAlreadyExistsException;
@@ -81,6 +84,57 @@ public class DeviceRegisterService {
 							deviceRegister.getDeviceType().getId()));
 			
 		return this.deviceRegisterRepository.save(deviceRegister);
+	}
+	
+	@Transactional
+	public List<DeviceRegister> createBulk(BulkCreateDeviceRegisterDTO bulkCreateDeviceRegisterDTO) {
+		
+		List<DeviceRegister> listOfDeviceRegisterToSave = new ArrayList<DeviceRegister>();
+		
+		// Verifique se já existe algum cadastro com a chave composta de cpf e mac
+		bulkCreateDeviceRegisterDTO.getIds().stream().forEach( dr -> {
+			var deviceRegisterAlreadyExists = deviceRegisterRepository
+					.findByIdsCpfAndIdsMac(dr.getCpf(), dr.getMac());
+			
+			deviceRegisterAlreadyExists.ifPresent( s -> { 
+					throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + dr.getCpf() +
+							" e mac " + dr.getMac() + " já existe!");
+				});
+			
+			
+			listOfDeviceRegisterToSave.add(
+					new DeviceRegister(
+							 dr.getCpf(),
+							 dr.getMac(),
+							 bulkCreateDeviceRegisterDTO.getGroup(),
+							 bulkCreateDeviceRegisterDTO.getDeviceType()
+						));
+			
+			
+		});
+		
+		
+		
+		// Precisa verificar se o grupo é válido antes de criar
+		
+		deviceUserGroupRepository.findById(bulkCreateDeviceRegisterDTO.getGroup().getId())
+			.orElseThrow( 
+					() -> new DeviceUserGroupNotFoundException("Não há nenhum " +
+							"grupo associado a esse id: " + 
+							bulkCreateDeviceRegisterDTO.getGroup().getId()));
+		
+		// Precisa verificar se o tipo de dispositivo é válido antes de criar
+		
+		deviceTypeRepository.findById(bulkCreateDeviceRegisterDTO.getDeviceType().getId())
+			.orElseThrow(
+					() -> new DeviceTypeNotFoundException("Não há nenhum " +
+							"tipo de dispositivo associado a esse id: " + 
+							bulkCreateDeviceRegisterDTO.getDeviceType().getId()));
+		
+		// Salva a lista de Dispositivos vindos do bulkCreateDeviceRegisterDTO
+		
+			
+		return this.deviceRegisterRepository.saveAll(listOfDeviceRegisterToSave);
 	}
 	
 	public DeviceRegister update(
