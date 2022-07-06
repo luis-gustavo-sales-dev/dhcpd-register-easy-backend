@@ -16,6 +16,20 @@ public class DeviceRegisterPK implements Serializable{
 	
 	@Size( min = 17, max = 17, message = "O campo MAC deve ter 17 caracteres (contando com os dois pontos)")
 	private String mac;
+	
+	
+
+	public DeviceRegisterPK() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public DeviceRegisterPK(@Size(min = 11, max = 11, message = "O campo CPF deve ter 11 caracteres.") String cpf,
+			@Size(min = 17, max = 17, message = "O campo MAC deve ter 17 caracteres (contando com os dois pontos)") String mac) {
+		super();
+		this.cpf = cpf;
+		this.mac = mac;
+	}
 
 	public String getCpf() {
 		return cpf;

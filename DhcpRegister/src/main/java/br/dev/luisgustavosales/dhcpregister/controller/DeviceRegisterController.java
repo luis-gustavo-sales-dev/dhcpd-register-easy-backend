@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.dev.luisgustavosales.dhcpregister.dtos.BulkCreateDeviceRegisterDTO;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
 import br.dev.luisgustavosales.dhcpregister.services.DeviceRegisterService;
 
@@ -61,6 +62,18 @@ public class DeviceRegisterController {
 		
 		
 		var deviceRegisterCreated = this.deviceRegisterService.create(deviceRegister);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(deviceRegisterCreated);
+		
+	}
+	
+	@PostMapping("/bulk")
+	public ResponseEntity<List<DeviceRegister>> createBulk(
+			@RequestBody BulkCreateDeviceRegisterDTO bulkCreateDeviceRegisterDTO){
+		
+		
+		
+		var deviceRegisterCreated = this.deviceRegisterService.createBulk(bulkCreateDeviceRegisterDTO);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(deviceRegisterCreated);
 		
