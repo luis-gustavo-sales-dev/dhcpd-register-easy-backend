@@ -92,22 +92,23 @@ public class DeviceRegisterService {
 		List<DeviceRegister> listOfDeviceRegisterToSave = new ArrayList<DeviceRegister>();
 		
 		// Verifique se já existe algum cadastro com a chave composta de cpf e mac
-		bulkCreateDeviceRegisterDTO.getIds().stream().forEach( dr -> {
+		bulkCreateDeviceRegisterDTO.getMacs().stream().forEach( mac -> {
 			var deviceRegisterAlreadyExists = deviceRegisterRepository
-					.findByIdsCpfAndIdsMac(dr.getCpf(), dr.getMac());
+					.findByIdsCpfAndIdsMac(bulkCreateDeviceRegisterDTO.getCpf(), mac);
 			
 			deviceRegisterAlreadyExists.ifPresent( s -> { 
-					throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + dr.getCpf() +
-							" e mac " + dr.getMac() + " já existe!");
+					throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + 
+								bulkCreateDeviceRegisterDTO.getCpf() +
+								" e mac " + mac + " já existe!");
 				});
 			
 			
 			listOfDeviceRegisterToSave.add(
 					new DeviceRegister(
-							 dr.getCpf(),
-							 dr.getMac(),
-							 bulkCreateDeviceRegisterDTO.getGroup(),
-							 bulkCreateDeviceRegisterDTO.getDeviceType()
+							bulkCreateDeviceRegisterDTO.getCpf(),
+							mac,
+							bulkCreateDeviceRegisterDTO.getGroup(),
+							bulkCreateDeviceRegisterDTO.getDeviceType()
 						));
 			
 			

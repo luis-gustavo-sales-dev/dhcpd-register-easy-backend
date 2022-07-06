@@ -2,7 +2,10 @@ package br.dev.luisgustavosales.dhcpregister.dtos;
 
 import java.util.Set;
 
-import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegisterPK;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceType;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import lombok.Data;
@@ -10,10 +13,16 @@ import lombok.Data;
 @Data
 public class BulkCreateDeviceRegisterDTO {
 	
-	private Set<DeviceRegisterPK> ids;
+	@NotBlank
+	private String cpf;
 	
+	@Size(min=1, max=4)
+	private Set<String> macs;
+	
+	@NotNull
 	private DeviceUserGroup group;
 	
+	@NotNull
 	private DeviceType deviceType;
 
 }
