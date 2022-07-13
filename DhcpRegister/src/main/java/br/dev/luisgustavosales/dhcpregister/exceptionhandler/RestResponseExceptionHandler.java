@@ -21,9 +21,25 @@ import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUs
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupAreUsedByDeviceRegiterException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.IpRangeAlreadyExistsInOtherDeviceUserGroupException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.MacIsNotValidException;
 
 @ControllerAdvice
 public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler{
+	
+	@ExceptionHandler(MacIsNotValidException.class)
+	public ResponseEntity<Object> handleMacIsNotValidException(
+			MacIsNotValidException ex,
+			WebRequest request) {
+		
+		var status = HttpStatus.BAD_REQUEST;
+		
+		var defaultException = new DefaultException();
+		defaultException.setStatus(status.value());
+		defaultException.setTitle(ex.getMessage());
+		defaultException.setDateTime(LocalDateTime.now());
+		
+		return handleExceptionInternal(ex, defaultException, new HttpHeaders(), status, request);
+	}
 	
 	@ExceptionHandler(CpfAndMacNotFoundException.class)
 	public ResponseEntity<Object> handleCpfAndMacNotFoundException(

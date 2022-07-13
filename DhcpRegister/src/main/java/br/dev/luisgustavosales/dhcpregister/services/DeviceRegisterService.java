@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import br.dev.luisgustavosales.dhcpregister.dtos.BulkCreateDeviceRegisterDTO;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
@@ -14,9 +15,11 @@ import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMa
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMacNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceTypeNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
+import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.MacIsNotValidException;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceTypeRepository;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
+import br.dev.luisgustavosales.dhcpregister.utils.MacUtils;
 
 @Service
 public class DeviceRegisterService {
@@ -29,6 +32,9 @@ public class DeviceRegisterService {
 	
 	@Autowired
 	private DeviceTypeRepository deviceTypeRepository;
+	
+	@Autowired
+	private MacUtils mu;
 
 	public DeviceRegister findByCpfAndMac(String cpf, String mac) {
 		
@@ -61,6 +67,8 @@ public class DeviceRegisterService {
 		var cpf = deviceRegister.getIds().getCpf();
 		var mac = deviceRegister.getIds().getMac();
 		
+		// Precisa validar os MACs aqui tbm
+		
 		var deviceRegisterAlreadyExists = deviceRegisterRepository
 				.findByIdsCpfAndIdsMac(cpf, mac);
 		
@@ -68,6 +76,7 @@ public class DeviceRegisterService {
 				throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + cpf +
 						" e mac " + mac + " já existe!");
 			});
+		
 		
 		// Precisa verificar se o grupo é válido antes de criar
 		
@@ -93,23 +102,36 @@ public class DeviceRegisterService {
 		
 		// Verifique se já existe algum cadastro com a chave composta de cpf e mac
 		bulkCreateDeviceRegisterDTO.getMacs().stream().forEach( mac -> {
-			var deviceRegisterAlreadyExists = deviceRegisterRepository
-					.findByIdsCpfAndIdsMac(bulkCreateDeviceRegisterDTO.getCpf(), mac);
 			
-			deviceRegisterAlreadyExists.ifPresent( s -> { 
-					throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + 
+			// Verifica se tem algo no mac antes de tentar salvar
+			if(StringUtils.hasText(mac)) {
+				// Valida o MAC
+				if (mu.validateMac(mac)) {
+					
+					String formattedMac = mu.formatMac(mac);
+					
+					var deviceRegisterAlreadyExists = deviceRegisterRepository
+							.findByIdsCpfAndIdsMac(bulkCreateDeviceRegisterDTO.getCpf(), formattedMac);
+					
+					deviceRegisterAlreadyExists.ifPresent( s -> { 
+						throw new CpfAndMacAlreadyExistsException("Este registro com cpf " + 
 								bulkCreateDeviceRegisterDTO.getCpf() +
-								" e mac " + mac + " já existe!");
-				});
-			
-			
-			listOfDeviceRegisterToSave.add(
-					new DeviceRegister(
-							bulkCreateDeviceRegisterDTO.getCpf(),
-							mac,
-							bulkCreateDeviceRegisterDTO.getGroup(),
-							bulkCreateDeviceRegisterDTO.getDeviceType()
-						));
+								" e mac " + formattedMac + " já existe!");
+					});
+					
+					
+					listOfDeviceRegisterToSave.add(
+							new DeviceRegister(
+									bulkCreateDeviceRegisterDTO.getCpf(),
+									formattedMac,
+									bulkCreateDeviceRegisterDTO.getGroup(),
+									bulkCreateDeviceRegisterDTO.getDeviceType()
+									));
+				} else {
+					throw new MacIsNotValidException("O MAC " + mac + " não é válido.");
+				}
+				
+			}
 			
 			
 		});
