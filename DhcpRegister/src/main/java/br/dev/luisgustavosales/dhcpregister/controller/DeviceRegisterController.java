@@ -59,7 +59,7 @@ public class DeviceRegisterController {
 	
 	@PostMapping
 	public ResponseEntity<DeviceRegister> create(
-			@RequestBody DeviceRegister deviceRegister){
+			@Valid @RequestBody DeviceRegister deviceRegister){
 		
 		
 		
@@ -81,7 +81,7 @@ public class DeviceRegisterController {
 		
 	}
 	
-	@PutMapping("/{cpf}/{mac}")
+	/*@PutMapping("/{cpf}/{mac}")
 	public ResponseEntity<DeviceRegister> update(
 			@PathVariable String cpf,
 			@PathVariable String mac,
@@ -89,7 +89,7 @@ public class DeviceRegisterController {
 		var dr = this.deviceRegisterService.update(cpf, mac, deviceRegister);
 		return ResponseEntity.ok(dr);
 		
-	}
+	}*/
 	
 	@DeleteMapping("/{cpf}/{mac}")
 	public ResponseEntity<Void> delete(
