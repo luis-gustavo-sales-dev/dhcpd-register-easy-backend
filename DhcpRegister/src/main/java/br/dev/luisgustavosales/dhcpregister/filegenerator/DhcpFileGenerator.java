@@ -1,12 +1,16 @@
 package br.dev.luisgustavosales.dhcpregister.filegenerator;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.net.util.SubnetUtils;
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,46 +89,37 @@ public class DhcpFileGenerator {
 		return this.mapDeviceUsersPools.get(groupId).getRange().get(indexRange).pop();
 	}
 	
-	public void generateFileContent() {
+	public void generateFile() {
 		// Gerar IPs
 		
 		// Pegar todos os grupos
-		List<DeviceUserGroup> allUserGroups = new ArrayList();
+		List<DeviceUserGroup> allUserGroups = new ArrayList<DeviceUserGroup>();
 		
 		// Arquivo de configuraçao
-		StringBuilder sb = new StringBuilder();
+		
+		String fileName = "/mnt/ramdisk/dhcpd.conf.registers";
 		
 		String spaces = new String("    ");
 		
 		allUserGroups = getDeviceGroupFromDatabase();
 		
+		// Path configFile = Paths.get("/home/luis/dhcpd.conf");
+		
+		
 		if (allUserGroups.size() > 0) {
 			this.generateAllIPPools(allUserGroups);
-			// Pecorrer todos os grupos
-			/*
-			 * host Ap-20-Ubiquiti-Bloco-A0-Rubens-Moll {
-				  hardware ethernet f0:9f:c2:23:80:87;
-				  fixed-address 10.17.128.7;
-				}
-			 * */
+
 			allUserGroups.stream().forEach( group -> {
 				var allDeviceRegisterGroup = this.deviceRegisterService.findAllByDeviceUserGroup(group);
-				
-				
-				
-				
+
 				if (allDeviceRegisterGroup.size() > 0) {
-					
-					// Verifique se a quantidade de registro cabe na faixa de IPs
-					/*if (allDeviceRegisterGroup.size() > 0) {
-						
-					}*/
 					
 					// Coloque um IP aqui
 					allDeviceRegisterGroup.stream().forEach( device -> {
 						// Aqui precisa pegar dos dois pools, 2 ips para cada device
 						int[] index = {0};
 						device.getGroup().getIprangegroup().forEach( range -> {
+							StringBuilder sb = new StringBuilder();
 							String ipFromPool = this.getIpFromDhcpGroupIpPool(group.getId(), index[0]);
 							sb.append("\nhost ");
 							sb.append(device.getIds().getCpf());
@@ -140,6 +135,23 @@ public class DhcpFileGenerator {
 							sb.append(spaces);
 							sb.append("fixed-address " + ipFromPool + ";\n}");
 							
+							System.out.println(sb.toString());
+							
+							
+						    try {
+						    	FileOutputStream fos = new FileOutputStream(fileName, true);
+							    DataOutputStream outStream = new DataOutputStream(new BufferedOutputStream(fos));
+								outStream.writeBytes(sb.toString());
+								outStream.close();								
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+								System.out.println("HOUVE UM PROBLEMA NA ESCRITA DO ARQUIVO:");
+								System.out.println(fileName);
+							}
+							// Inserir no arquivo
+							
+							
 							index[0]++;
 						});
 						
@@ -150,13 +162,10 @@ public class DhcpFileGenerator {
 			});
 		}
 		
-		System.out.println("ARQUIVO DE CONFIGURAÇÃO GERADOS");
-		System.out.println("-------------------------------");
+		// System.out.println("ARQUIVO DE CONFIGURAÇÃO GERADOS");
+		// System.out.println("-------------------------------");
 
-		System.out.println(sb.toString());
-	}
-	
-	public void generateFile() {
+		// System.out.println(sb.toString());
 		
 	}
 }

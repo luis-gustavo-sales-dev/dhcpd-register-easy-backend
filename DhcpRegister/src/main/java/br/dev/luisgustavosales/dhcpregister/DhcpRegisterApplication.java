@@ -22,7 +22,7 @@ public class DhcpRegisterApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		dhcpFileGenerator.generateFileContent();
+		dhcpFileGenerator.generateFile();
 	}
 
 }
