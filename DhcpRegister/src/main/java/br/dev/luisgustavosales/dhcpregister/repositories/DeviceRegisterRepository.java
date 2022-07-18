@@ -17,4 +17,5 @@ public interface DeviceRegisterRepository extends JpaRepository<DeviceRegister, 
 	Optional<DeviceRegister> findByIdsCpfAndIdsMac(String cpf, String mac);
 	Optional<List<DeviceRegister>> findByIdsCpfContaining(String cpf);
 	Optional<DeviceRegister> findByGroup(DeviceUserGroup deviceUserGroup);
+	Optional<List<DeviceRegister>> findAllByGroup(DeviceUserGroup deviceUserGroup);
 }

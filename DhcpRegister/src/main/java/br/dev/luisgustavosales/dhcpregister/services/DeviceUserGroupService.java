@@ -158,4 +158,9 @@ public class DeviceUserGroupService {
 		return this.deviceUserGroupRepository.save(deviceUserGroupToUpdate);
 		
 	}
+
+	public List<DeviceUserGroup> findAll() {
+		// TODO Auto-generated method stub
+		return this.deviceUserGroupRepository.findAll();
+	}
 }

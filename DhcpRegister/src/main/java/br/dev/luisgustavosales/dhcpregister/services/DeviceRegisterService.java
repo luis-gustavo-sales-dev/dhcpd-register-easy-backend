@@ -216,4 +216,9 @@ public class DeviceRegisterService {
 		
 		
 	}
+
+	public List<DeviceRegister> findAllByDeviceUserGroup(DeviceUserGroup group) {
+		// TODO Auto-generated method stub
+		return this.deviceRegisterRepository.findAllByGroup(group).get();
+	}
 }
