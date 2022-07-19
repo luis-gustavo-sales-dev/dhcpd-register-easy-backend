@@ -1,9 +1,6 @@
 package br.dev.luisgustavosales.dhcpregister.configs;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
@@ -31,31 +28,35 @@ public class CommandExecutor {
 				// Tenta reexecutar o comando a cada x segundos
 				while(true) {
 					
-					// Através de uma thread
-					ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-					exec.scheduleAtFixedRate(new Runnable() {
-					  @Override
-					  public void run() {
-						try {
-							if(CommandExecutor.runningCommand == 0) {
-								CommandExecutor.runningCommand = 1;
-								Process retryCommand;
-								retryCommand = Runtime.getRuntime().exec(restartDhcpServer);
-								retryCommand.waitFor();
-								CommandExecutor.runningCommand = 0;
-							}
-						} catch (IOException | InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					// Esperar 2 segundos para tentar executar
+					Thread.sleep(2000);
+					
+					System.out.print(tagDHCPService+":");
+					System.out.println("Tentando executar após intervalo de 2 segundos.");
+					
+					try {
+						if(CommandExecutor.runningCommand == 0) {
+							CommandExecutor.runningCommand = 1;
+							Process retryCommand;
+							retryCommand = Runtime.getRuntime().exec(restartDhcpServer);
+							retryCommand.waitFor();
 							CommandExecutor.runningCommand = 0;
+							
 							System.out.print(tagDHCPService+":");
-							System.out.println("Falha na tentativa de reiniciar após estar bloqueado.");
+							System.out.println("Executei após liberação.");
 						}
-					  }
-					}, 0, 2, TimeUnit.SECONDS);
+					} catch (IOException | InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						CommandExecutor.runningCommand = 0;
+						System.out.print(tagDHCPService+":");
+						System.out.println("Falha na tentativa de reiniciar após estar bloqueado.");
+					}
 					
 					// Se commando já foi executado saí do loop
 					if(CommandExecutor.runningCommand == 0) {
+						System.out.print(tagDHCPService+":");
+						System.out.println("Saí do loop.");
 						break;
 					}
 				}
