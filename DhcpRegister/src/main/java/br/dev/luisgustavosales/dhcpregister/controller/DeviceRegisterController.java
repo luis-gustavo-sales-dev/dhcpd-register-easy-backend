@@ -2,6 +2,8 @@ package br.dev.luisgustavosales.dhcpregister.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.dev.luisgustavosales.dhcpregister.dtos.BulkCreateDeviceRegisterDTO;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceRegister;
 import br.dev.luisgustavosales.dhcpregister.services.DeviceRegisterService;
 
@@ -56,7 +59,7 @@ public class DeviceRegisterController {
 	
 	@PostMapping
 	public ResponseEntity<DeviceRegister> create(
-			@RequestBody DeviceRegister deviceRegister){
+			@Valid @RequestBody DeviceRegister deviceRegister){
 		
 		
 		
@@ -66,7 +69,19 @@ public class DeviceRegisterController {
 		
 	}
 	
-	@PutMapping("/{cpf}/{mac}")
+	@PostMapping("/bulk")
+	public ResponseEntity<List<DeviceRegister>> createBulk(
+			@Valid @RequestBody BulkCreateDeviceRegisterDTO bulkCreateDeviceRegisterDTO){
+		
+		
+		
+		var deviceRegisterCreated = this.deviceRegisterService.createBulk(bulkCreateDeviceRegisterDTO);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(deviceRegisterCreated);
+		
+	}
+	
+	/*@PutMapping("/{cpf}/{mac}")
 	public ResponseEntity<DeviceRegister> update(
 			@PathVariable String cpf,
 			@PathVariable String mac,
@@ -74,7 +89,7 @@ public class DeviceRegisterController {
 		var dr = this.deviceRegisterService.update(cpf, mac, deviceRegister);
 		return ResponseEntity.ok(dr);
 		
-	}
+	}*/
 	
 	@DeleteMapping("/{cpf}/{mac}")
 	public ResponseEntity<Void> delete(

@@ -23,6 +23,27 @@ public class DeviceRegister implements Serializable{
 	
 	@ManyToOne
 	private DeviceType deviceType;
+	
+	
+
+	public DeviceRegister() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public DeviceRegister(DeviceRegisterPK ids, DeviceUserGroup group, DeviceType deviceType) {
+		super();
+		this.ids = ids;
+		this.group = group;
+		this.deviceType = deviceType;
+	}
+	
+	public DeviceRegister(String cpf, String mac, DeviceUserGroup group, DeviceType deviceType) {
+		super();
+		this.ids = new DeviceRegisterPK(cpf, mac);
+		this.group = group;
+		this.deviceType = deviceType;
+	}
 
 	public DeviceRegisterPK getIds() {
 		return ids;
