@@ -10,23 +10,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.net.util.SubnetUtils;
-import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.entities.IpRangeGroup;
-import br.dev.luisgustavosales.dhcpregister.services.DeviceRegisterService;
-import br.dev.luisgustavosales.dhcpregister.services.DeviceUserGroupService;
+import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
+import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
 
 @Service
 public class DhcpFileGenerator {
 	
 	@Autowired
-	private DeviceRegisterService deviceRegisterService;
+	private DeviceRegisterRepository deviceRegisterRepository;
 	
 	@Autowired
-	private DeviceUserGroupService deviceUserGroupService;
+	private DeviceUserGroupRepository deviceUserGroupRepository;
 	
 	HashMap<Long, DhcpGroupIpPool> mapDeviceUsersPools = new HashMap<>();
 	
@@ -38,7 +37,7 @@ public class DhcpFileGenerator {
 	
 	// 1 - Pegar todos os grupos
 	private List<DeviceUserGroup> getDeviceGroupFromDatabase() {
-		return this.deviceUserGroupService.findAll();
+		return this.deviceUserGroupRepository.findAll();
 	}
 	
 	
@@ -98,6 +97,7 @@ public class DhcpFileGenerator {
 		// Arquivo de configuraçao
 		
 		String fileName = "/mnt/ramdisk/dhcpd.conf.registers";
+		//String fileName = "/home/luis/dhcpd.conf.registers";
 		
 		String spaces = new String("    ");
 		
@@ -110,7 +110,7 @@ public class DhcpFileGenerator {
 			this.generateAllIPPools(allUserGroups);
 
 			allUserGroups.stream().forEach( group -> {
-				var allDeviceRegisterGroup = this.deviceRegisterService.findAllByDeviceUserGroup(group);
+				var allDeviceRegisterGroup = this.deviceRegisterRepository.findAllByGroup(group).get();
 
 				if (allDeviceRegisterGroup.size() > 0) {
 					
