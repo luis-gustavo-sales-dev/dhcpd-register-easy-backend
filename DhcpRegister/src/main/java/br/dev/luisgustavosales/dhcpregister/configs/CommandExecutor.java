@@ -14,21 +14,21 @@ public class CommandExecutor {
 	private String tagDHCPService = "DHCPService";
 
 	public void restartDhcpService() {
-		System.out.println("Trying to restart dhcp service.");
+		//System.out.println("Trying to restart dhcp service.");
 		try {
 			
 			// Executa o comando se nenhum outro processo estiver executando
 			if (CommandExecutor.runningCommand == 0) {
 				// Está liberado e pode executar
 				CommandExecutor.runningCommand = 1;
-				System.out.println("Executando comando.");
-				System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
+				//System.out.println("Executando comando.");
+				//System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
 				var command = Runtime.getRuntime().exec(restartDhcpServer);
-				System.out.println("Aguardando executar comando.");
+				//System.out.println("Aguardando executar comando.");
 				command.waitFor();
-				System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
+				//System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
 				CommandExecutor.runningCommand = 0;
-				System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
+				//System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
 			} else {
 				// Tenta reexecutar o comando a cada x segundos
 				while(true) {
@@ -36,8 +36,8 @@ public class CommandExecutor {
 					// Esperar 2 segundos para tentar executar
 					Thread.sleep(2000);
 					
-					System.out.print(tagDHCPService+":");
-					System.out.println("Tentando executar após intervalo de 2 segundos.");
+					//System.out.print(tagDHCPService+":");
+					//System.out.println("Tentando executar após intervalo de 2 segundos.");
 					
 					try {
 						if(CommandExecutor.runningCommand == 0) {
@@ -47,21 +47,21 @@ public class CommandExecutor {
 							retryCommand.waitFor();
 							CommandExecutor.runningCommand = 0;
 							
-							System.out.print(tagDHCPService+":");
-							System.out.println("Executei após liberação.");
+							//System.out.print(tagDHCPService+":");
+							//System.out.println("Executei após liberação.");
 						}
 					} catch (IOException | InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						CommandExecutor.runningCommand = 0;
-						System.out.print(tagDHCPService+":");
-						System.out.println("Falha na tentativa de reiniciar após estar bloqueado.");
+						//System.out.print(tagDHCPService+":");
+						//System.out.println("Falha na tentativa de reiniciar após estar bloqueado.");
 					}
 					
 					// Se commando já foi executado saí do loop
 					if(CommandExecutor.runningCommand == 0) {
-						System.out.print(tagDHCPService+":");
-						System.out.println("Saí do loop.");
+						//System.out.print(tagDHCPService+":");
+						//System.out.println("Saí do loop.");
 						break;
 					}
 				}
@@ -70,9 +70,9 @@ public class CommandExecutor {
 		} catch (IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.print(tagDHCPService+":");
-			System.out.println("Não foi possível reiniciar o servidor do DHCP.");
+			//System.out.print(tagDHCPService+":");
+			//System.out.println("Não foi possível reiniciar o servidor do DHCP.");
 		}
-		System.out.print(tagDHCPService+": RESTARTED");
+		//System.out.print(tagDHCPService+": RESTARTED");
 	}
 }
