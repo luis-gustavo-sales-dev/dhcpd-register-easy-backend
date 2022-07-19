@@ -21,9 +21,14 @@ public class CommandExecutor {
 			if (CommandExecutor.runningCommand == 0) {
 				// Está liberado e pode executar
 				CommandExecutor.runningCommand = 1;
+				System.out.println("Executando comando.");
+				System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
 				var command = Runtime.getRuntime().exec(restartDhcpServer);
+				System.out.println("Aguardando executar comando.");
 				command.waitFor();
-				CommandExecutor.runningCommand = 0;				
+				System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
+				CommandExecutor.runningCommand = 0;
+				System.out.println("CommandExecutor.runningCommand" + CommandExecutor.runningCommand);
 			} else {
 				// Tenta reexecutar o comando a cada x segundos
 				while(true) {
