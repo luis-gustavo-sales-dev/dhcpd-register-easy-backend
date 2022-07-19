@@ -149,7 +149,7 @@ public class DhcpFileGenerator {
 							sb.append(spaces);
 							sb.append("hardware ethernet " + device.getIds().getMac() + ";\n");
 							sb.append(spaces);
-							sb.append("fixed-address " + ipFromPool + ";\n}");
+							sb.append("fixed-address " + ipFromPool + ";\n}\n");
 							
 							System.out.println(sb.toString());
 							

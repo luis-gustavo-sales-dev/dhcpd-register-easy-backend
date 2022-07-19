@@ -3,8 +3,8 @@
 INSERT INTO tb_device_group (name) VALUES ('Servidor');
 INSERT INTO tb_device_group (name) VALUES ('Terceirizado');
 INSERT INTO tb_device_group (name) VALUES ('Bolsista');
-INSERT INTO tb_device_group (name) VALUES ('Estagiário');
-INSERT INTO tb_device_group (name) VALUES ('Temporário');
+INSERT INTO tb_device_group (name) VALUES ('Estagiario');
+INSERT INTO tb_device_group (name) VALUES ('Temporario');
 
 INSERT INTO tb_ip_range_group (range) VALUES ('10.10.160.0/22');
 INSERT INTO tb_ip_range_group (range) VALUES ('10.12.160.0/22');
