@@ -16,6 +16,7 @@ import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.CpfAndMa
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceTypeNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.DeviceUserGroupNotFoundException;
 import br.dev.luisgustavosales.dhcpregister.exceptionhandler.exceptions.MacIsNotValidException;
+import br.dev.luisgustavosales.dhcpregister.filegenerator.DhcpFileGenerator;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceTypeRepository;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceUserGroupRepository;
@@ -32,6 +33,9 @@ public class DeviceRegisterService {
 	
 	@Autowired
 	private DeviceTypeRepository deviceTypeRepository;
+	
+	@Autowired
+	private DhcpFileGenerator dhcpFileGenerator;
 	
 	@Autowired
 	private MacUtils mu;
@@ -156,8 +160,12 @@ public class DeviceRegisterService {
 		
 		// Salva a lista de Dispositivos vindos do bulkCreateDeviceRegisterDTO
 		
+		var returnDeviceRegisters = this.deviceRegisterRepository.saveAll(listOfDeviceRegisterToSave);
+		
+		this.dhcpFileGenerator.generateFile();
+		
 			
-		return this.deviceRegisterRepository.saveAll(listOfDeviceRegisterToSave);
+		return returnDeviceRegisters;
 	}
 	
 	public DeviceRegister update(
@@ -213,6 +221,8 @@ public class DeviceRegisterService {
 						() -> new CpfAndMacNotFoundException(
 								"Cpf " + cpf + " e mac " + mac + " não foram encontrados."));
 		this.deviceRegisterRepository.delete(deviceRegister);
+		
+		this.dhcpFileGenerator.generateFile();
 		
 		
 	}
