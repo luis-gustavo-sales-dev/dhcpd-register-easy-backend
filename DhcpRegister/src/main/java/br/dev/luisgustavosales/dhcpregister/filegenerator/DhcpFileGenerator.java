@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.dev.luisgustavosales.dhcpregister.configs.CommandExecutor;
+import br.dev.luisgustavosales.dhcpregister.configs.DhcpServiceProperties;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.entities.IpRangeGroup;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
@@ -30,6 +31,9 @@ public class DhcpFileGenerator {
 	
 	@Autowired
 	private CommandExecutor commandExecutor;
+	
+	@Autowired
+	private DhcpServiceProperties dhcpServiceProperties;
 	
 	HashMap<Long, DhcpGroupIpPool> mapDeviceUsersPools = new HashMap<>();
 	
@@ -100,7 +104,7 @@ public class DhcpFileGenerator {
 		
 		// Arquivo de configuraçao
 		
-		String fileName = "/mnt/ramdisk/dhcpd.conf.registers";
+		String fileName = dhcpServiceProperties.getConfigFile();
 		// String fileName = "/home/luis/dhcpd.conf.registers";
 		
 		String spaces = new String("    ");

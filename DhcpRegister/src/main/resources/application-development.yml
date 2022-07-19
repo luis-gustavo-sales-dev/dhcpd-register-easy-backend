@@ -1,0 +1,33 @@
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${properties.eureka.host}:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+server:
+  port: 9090
+  
+properties:
+  eureka:
+    host: localhost
+  dhcp:
+    config-file: /home/luis/Downloads2/lixo/dhcp.registers.conf
+
+spring:
+  application:
+    name: dhcpregister-development
+  datasource:
+    password: ''
+    url: jdbc:h2:mem:testdb
+    username: sa
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
