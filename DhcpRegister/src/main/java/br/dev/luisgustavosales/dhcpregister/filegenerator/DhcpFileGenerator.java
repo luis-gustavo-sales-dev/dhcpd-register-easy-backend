@@ -14,6 +14,7 @@ import org.apache.commons.net.util.SubnetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.dev.luisgustavosales.dhcpregister.configs.CommandExecutor;
 import br.dev.luisgustavosales.dhcpregister.entities.DeviceUserGroup;
 import br.dev.luisgustavosales.dhcpregister.entities.IpRangeGroup;
 import br.dev.luisgustavosales.dhcpregister.repositories.DeviceRegisterRepository;
@@ -27,6 +28,9 @@ public class DhcpFileGenerator {
 	
 	@Autowired
 	private DeviceUserGroupRepository deviceUserGroupRepository;
+	
+	@Autowired
+	private CommandExecutor commandExecutor;
 	
 	HashMap<Long, DhcpGroupIpPool> mapDeviceUsersPools = new HashMap<>();
 	
@@ -101,6 +105,8 @@ public class DhcpFileGenerator {
 		// String fileName = "/home/luis/dhcpd.conf.registers";
 		
 		String spaces = new String("    ");
+		
+		// String restartDhcpServer = "systemctl restart isc-dhcp-server.service";
 		
 		allUserGroups = getDeviceGroupFromDatabase();
 		
@@ -182,6 +188,9 @@ public class DhcpFileGenerator {
 		// System.out.println("-------------------------------");
 
 		// System.out.println(sb.toString());
+		
+		// Reinicie o serviço
+		commandExecutor.restartDhcpService();
 		
 	}
 }
