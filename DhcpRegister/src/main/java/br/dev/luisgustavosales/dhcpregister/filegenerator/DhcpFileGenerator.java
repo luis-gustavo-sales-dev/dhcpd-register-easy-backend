@@ -2,6 +2,7 @@ package br.dev.luisgustavosales.dhcpregister.filegenerator;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,13 +98,28 @@ public class DhcpFileGenerator {
 		// Arquivo de configuraçao
 		
 		String fileName = "/mnt/ramdisk/dhcpd.conf.registers";
-		//String fileName = "/home/luis/dhcpd.conf.registers";
+		// String fileName = "/home/luis/dhcpd.conf.registers";
 		
 		String spaces = new String("    ");
 		
 		allUserGroups = getDeviceGroupFromDatabase();
 		
 		// Path configFile = Paths.get("/home/luis/dhcpd.conf");
+		
+		// Clean file
+		FileOutputStream file;
+		try {
+			file = new FileOutputStream(fileName);
+			DataOutputStream fileOutStream = new DataOutputStream(new BufferedOutputStream(file));
+		    fileOutStream.writeBytes("\n");
+		    fileOutStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("HOUVE UM PROBLEMA NA ESCRITA DO ARQUIVO:");
+			System.out.println(fileName);
+		}
+	    
 		
 		
 		if (allUserGroups.size() > 0) {
